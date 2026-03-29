@@ -126,6 +126,8 @@ class VpsManager:
                 VPS_BASE_IMAGE,
                 detach=True,
                 name=container_name,
+                # host networking: bridge is disabled on Railway (Podman runtime)
+                network_mode="host",
                 ports={"22/tcp": port},
                 mem_limit=cfg["mem_limit"],
                 cpu_quota=cfg["cpu_quota"],
