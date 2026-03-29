@@ -3,14 +3,6 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Docker-in-Docker requires privileged mode.
-# Enable this in Railway dashboard: Settings → Deploy → Privileged mode = ON
-# (railway.toml cannot set privileged — it must be toggled in the UI)
 startCommand = "/app/railway-entrypoint.sh"
-healthcheckPath = "/"
-healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 5
-
-[[services]]
-name = "teamdev-hostbot"
