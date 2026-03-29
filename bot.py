@@ -71,7 +71,18 @@ rate_limiter   = RateLimiter(db)
 logger         = BotLogger(bot, LOG_CHANNEL_ID)
 docker_client  = docker_sdk.from_env()
 
-bot_info     = bot.get_me()
+# Retry get_me() — on Railway the network stack may take a moment to be ready
+_retries = 0
+while True:
+    try:
+        bot_info = bot.get_me()
+        break
+    except Exception as _e:
+        _retries += 1
+        if _retries >= 10:
+            raise
+        print(f"[bot] Waiting for network... ({_retries}/10): {_e}")
+        time.sleep(3)
 BOT_USERNAME = bot_info.username
 BOT_NAME     = bot_info.first_name
 
