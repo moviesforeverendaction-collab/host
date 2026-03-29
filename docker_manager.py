@@ -63,7 +63,8 @@ class DockerManager:
             print(f"[Deploy] Building image: {image_tag}")
 
             image, build_logs = self.client.images.build(
-                path=dockerfile_path, tag=image_tag, rm=True, nocache=False
+                path=dockerfile_path, tag=image_tag, rm=True, nocache=False,
+                buildargs={}, network_mode='host'
             )
 
             build_output = []
