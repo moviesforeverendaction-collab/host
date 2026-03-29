@@ -78,7 +78,7 @@ class DockerManager:
                 cpu_quota=int(limits['cpu_cores'] * 100000),
                 mem_limit=f"{limits['memory']}m",
                 restart_policy={"Name": "on-failure", "MaximumRetryCount": 5} if limits['restart_on_crash'] else None,
-                network_mode='bridge',
+                network_mode='host',
                 labels={
                     'user_id': str(user_id),
                     'project_name': project_name,
