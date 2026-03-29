@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TeamDev — 𝐃ᴏᴄᴋᴇʀ ✖ 𝐇ᴏ𝐬ᴛɪɴɢ Docs</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #05050a;
+  --bg2:      #0c0c14;
+  --surface:  #10101c;
+  --surface2: #181826;
+  --border:   #1e1e30;
+  --border2:  #2a2a40;
+  --a1: #5b5bff;
+  --a2: #ff5b8a;
+  --a3: #5bffb8;
+  --a4: #ffb85b;
+  --text:  #e6e6f5;
+  --muted: #6060a0;
+  --dim:   #3a3a60;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  display: flex;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ───────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── GLOW BG ─────────────────────────────── */
+.glow-bg {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(91,91,255,0.07) 0%, transparent 70%);
+  top: -200px; left: -100px;
+}
+.glow-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(255,91,138,0.05) 0%, transparent 70%);
+  bottom: -100px; right: -50px;
+}
+
+/* ══════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════ */
+.sidebar {
+  width: 270px; min-width: 270px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  height: 100vh;
+  position: sticky; top: 0;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px;}
+
+.sb-header {
+  padding: 24px 20px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sb-brand {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 6px;
+}
+
+.sb-logo {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--a1), var(--a2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  position: relative;
+}
+.sb-logo::after {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--a1), var(--a2));
+  z-index: -1; filter: blur(6px); opacity: 0.5;
+}
+
+.sb-title { font-weight: 800; font-size: 17px; line-height: 1.2; letter-spacing: -0.3px; }
+.sb-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.sb-status {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 10px;
+  font-size: 12px; color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.sb-status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--a3);
+  box-shadow: 0 0 8px var(--a3);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.sb-search {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sb-search input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  outline: none;
+  transition: border 0.2s;
+}
+.sb-search input:focus { border-color: var(--a1); }
+.sb-search input::placeholder { color: var(--dim); }
+
+.sb-nav { padding: 10px 12px; flex: 1; }
+
+.sb-group { margin-bottom: 4px; }
+.sb-group-label {
+  padding: 8px 8px 4px;
+  font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--dim);
+  font-weight: 700;
+}
+
+.sb-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  text-decoration: none;
+}
+.sb-item:hover { background: var(--surface2); color: var(--text); }
+.sb-item.active {
+  background: rgba(91,91,255,0.12);
+  color: #9090ff;
+  border: 1px solid rgba(91,91,255,0.2);
+}
+.sb-item .ico { font-size: 14px; flex-shrink: 0; }
+.sb-badge {
+  margin-left: auto;
+  font-size: 9px; font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.badge-blue { background: rgba(91,91,255,0.2); color: var(--a1); }
+.badge-green { background: rgba(91,255,184,0.15); color: var(--a3); }
+.badge-red { background: rgba(255,91,138,0.15); color: var(--a2); }
+
+.sb-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+}
+.sb-links { display: flex; gap: 10px; }
+.sb-link {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px; font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  background: var(--bg2);
+}
+.sb-link:hover { border-color: var(--a1); color: var(--a1); }
+.sb-link.tg:hover { border-color: #229ED9; color: #229ED9; }
+
+/* ══════════════════════════════════════════
+   MAIN
+══════════════════════════════════════════ */
+.main {
+  flex: 1; overflow-y: auto;
+  position: relative; z-index: 1;
+}
+.main::-webkit-scrollbar{width:5px;}
+.main::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px;}
+
+/* TOPBAR */
+.topbar {
+  position: sticky; top: 0;
+  background: rgba(5,5,10,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 50;
+}
+.breadcrumb {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; color: var(--muted);
+}
+.breadcrumb span { color: var(--text); }
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+}
+.pill.live {
+  border-color: rgba(91,255,184,0.3);
+  color: var(--a3);
+  background: rgba(91,255,184,0.06);
+}
+.tg-btn {
+  background: #229ED9;
+  color: white; padding: 6px 16px;
+  border-radius: 8px; font-size: 12px;
+  font-weight: 700; text-decoration: none;
+  display: flex; align-items: center; gap: 5px;
+  transition: opacity 0.2s;
+}
+.tg-btn:hover { opacity: 0.85; }
+.hamburger {
+  display: none; background: none; border: none;
+  color: var(--text); font-size: 20px; cursor: pointer;
+}
+
+/* ══════════════════════════════════════════
+   SECTIONS
+══════════════════════════════════════════ */
+.section {
+  display: none; padding: 50px 44px;
+  max-width: 940px;
+  animation: fadeUp 0.3s ease;
+}
+.section.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero */
+.sec-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(91,91,255,0.1);
+  border: 1px solid rgba(91,91,255,0.22);
+  color: #9090ff;
+  padding: 4px 13px; border-radius: 20px;
+  font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+}
+
+h1 {
+  font-size: 46px; font-weight: 900;
+  line-height: 1.05; letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+h1 .grad {
+  background: linear-gradient(135deg, #9090ff 0%, var(--a2) 60%, var(--a4) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 22px; font-weight: 700;
+  margin: 44px 0 16px;
+  display: flex; align-items: center; gap: 12px;
+  letter-spacing: -0.3px;
+}
+h2 .h2-bar {
+  width: 3px; height: 22px; border-radius: 2px; flex-shrink: 0;
+  background: linear-gradient(to bottom, var(--a1), var(--a2));
+}
+
+h3 { font-size: 17px; font-weight: 600; margin: 22px 0 9px; color: var(--text); }
+
+p { color: #9898c8; line-height: 1.75; margin-bottom: 14px; font-size: 14.5px; }
+
+/* ── CODE ────────────────────────────────── */
+.codeblock {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 14px 0;
+  overflow: hidden;
+}
+.code-head {
+  background: var(--surface);
+  padding: 9px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.code-lang {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1.5px;
+}
+.copy-btn {
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); padding: 3px 10px;
+  border-radius: 6px; font-size: 10px;
+  cursor: pointer; transition: all 0.2s;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.copy-btn:hover { border-color: var(--a1); color: var(--a1); }
+.copy-btn.ok { border-color: var(--a3); color: var(--a3); }
+
+pre {
+  padding: 18px 20px;
+  overflow-x: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; line-height: 1.7;
+  color: #c0c0e8;
+}
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+code {
+  font-family: 'IBM Plex Mono', monospace;
+  background: rgba(91,91,255,0.1);
+  color: #9090ff;
+  padding: 2px 7px; border-radius: 5px;
+  font-size: 12.5px;
+}
+
+/* syntax */
+.t-green  { color: var(--a3); }
+.t-pink   { color: var(--a2); }
+.t-purple { color: var(--a1); }
+.t-yellow { color: var(--a4); }
+.t-dim    { color: #404068; }
+
+/* ── CALLOUT ─────────────────────────────── */
+.callout {
+  border-radius: 10px; padding: 14px 18px;
+  margin: 16px 0;
+  display: flex; gap: 12px; align-items: flex-start;
+  border: 1px solid;
+}
+.callout .ico { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.callout p { margin: 0; font-size: 13.5px; line-height: 1.65; }
+
+.c-info    { background: rgba(91,91,255,0.07); border-color: rgba(91,91,255,0.22); }
+.c-info p  { color: #9090cc; }
+.c-warn    { background: rgba(255,184,91,0.07); border-color: rgba(255,184,91,0.22); }
+.c-warn p  { color: #b09060; }
+.c-success { background: rgba(91,255,184,0.06); border-color: rgba(91,255,184,0.22); }
+.c-success p { color: #70b090; }
+.c-danger  { background: rgba(255,91,138,0.06); border-color: rgba(255,91,138,0.22); }
+.c-danger p { color: #b06080; }
+
+/* ── TABLE ───────────────────────────────── */
+.tw { overflow-x: auto; margin: 14px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th {
+  background: var(--surface);
+  padding: 11px 16px; text-align: left;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--muted);
+  font-weight: 700; border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba(30,30,48,0.6);
+  color: #9898c8; vertical-align: top;
+}
+tr:hover td { background: rgba(91,91,255,0.03); }
+tr:last-child td { border-bottom: none; }
+
+/* ── CARDS ───────────────────────────────── */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin: 18px 0; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+  cursor: pointer;
+  transition: all 0.22s;
+}
+.card:hover {
+  border-color: rgba(91,91,255,0.4);
+  transform: translateY(-3px);
+  background: var(--surface2);
+  box-shadow: 0 10px 40px rgba(91,91,255,0.08);
+}
+.card-icon { font-size: 26px; margin-bottom: 11px; }
+.card-title { font-weight: 700; font-size: 15px; margin-bottom: 5px; }
+.card-desc { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+
+/* ── PLANS ───────────────────────────────── */
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
+.plan {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px;
+  position: relative; overflow: hidden;
+}
+.plan.hot { border-color: rgba(91,91,255,0.4); }
+.plan.hot::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--a1), var(--a2));
+}
+.plan-pill {
+  display: inline-block;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  font-family: 'IBM Plex Mono', monospace;
+  margin-bottom: 14px;
+}
+.pp-free { background: rgba(91,255,184,0.1); color: var(--a3); border: 1px solid rgba(91,255,184,0.25); }
+.pp-prem { background: rgba(91,91,255,0.15); color: #9090ff; border: 1px solid rgba(91,91,255,0.3); }
+.plan-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.5px; }
+.plan-sub  { font-size: 12.5px; color: var(--muted); margin-bottom: 18px; }
+.plan-list { list-style: none; }
+.plan-list li {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(30,30,48,0.5);
+  font-size: 13px; color: #9898c8;
+  display: flex; align-items: center; gap: 9px;
+}
+.plan-list li:last-child { border-bottom: none; }
+.yes { color: var(--a3); }
+.no  { color: var(--a2); }
+
+/* ── STEPS ───────────────────────────────── */
+.steps { margin: 18px 0; }
+.step  { display: flex; gap: 18px; margin-bottom: 28px; }
+.step-num {
+  width: 34px; height: 34px; min-width: 34px;
+  background: linear-gradient(135deg, var(--a1), var(--a2));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 14px; color: white;
+  flex-shrink: 0; margin-top: 2px;
+  box-shadow: 0 0 16px rgba(91,91,255,0.3);
+}
+.step-content { flex: 1; }
+.step-content h3 { margin-top: 0; margin-bottom: 8px; }
+
+/* ── CMD TABLE ───────────────────────────── */
+.cmd-section h3 {
+  font-size: 14px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 2px;
+  margin: 28px 0 10px; font-weight: 700;
+}
+.cmd-row {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(30,30,48,0.4);
+}
+.cmd-row:last-child { border-bottom: none; }
+.cmd-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px; color: #9090ff;
+  min-width: 180px; flex-shrink: 0;
+  background: rgba(91,91,255,0.1);
+  padding: 3px 9px; border-radius: 6px;
+  align-self: flex-start;
+}
+.cmd-desc { font-size: 13.5px; color: #9898c8; line-height: 1.55; }
+
+/* ── HOME HERO ───────────────────────────── */
+.hero-meta {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.hero-stat {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 30px;
+}
+.hero-stat strong { color: var(--text); }
+
+/* ── MOBILE ──────────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: -270px; transition: left 0.28s; }
+  .sidebar.open { left: 0; }
+  .hamburger { display: block; }
+  .section { padding: 28px 20px; }
+  .topbar { padding: 12px 20px; }
+  h1 { font-size: 30px; }
+  .plans { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="glow-bg glow-1"></div>
+<div class="glow-bg glow-2"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-header">
+    <div class="sb-brand">
+      <div class="sb-logo">🐳</div>
+      <div>
+        <div class="sb-title">TeamDev</div>
+        <div class="sb-sub">DOCKER × HOSTING</div>
+      </div>
+    </div>
+    <div class="sb-status">
+      <div class="sb-status-dot"></div>
+      Bot Online · t.me/TeamDev_HostBot
+    </div>
+  </div>
+
+  <div class="sb-search">
+    <input type="text" placeholder="Search docs..." id="searchInput" oninput="filterNav(this.value)"/>
+  </div>
+
+  <div class="sb-nav" id="navList">
+    <div class="sb-group">
+      <div class="sb-group-label">Introduction</div>
+      <div class="sb-item active" data-sec="home" onclick="show('home')">
+        <span class="ico">🏠</span> Overview
+      </div>
+      <div class="sb-item" data-sec="getstarted" onclick="show('getstarted')">
+        <span class="ico">🚀</span> Get Started
+      </div>
+      <div class="sb-item" data-sec="requirements" onclick="show('requirements')">
+        <span class="ico">📋</span> Requirements
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Hosting</div>
+      <div class="sb-item" data-sec="upload" onclick="show('upload')">
+        <span class="ico">📦</span> Upload Project
+      </div>
+      <div class="sb-item" data-sec="github" onclick="show('github')">
+        <span class="ico">🐙</span> GitHub Deploy
+      </div>
+      <div class="sb-item" data-sec="manage" onclick="show('manage')">
+        <span class="ico">⚙️</span> Manage Projects
+      </div>
+      <div class="sb-item" data-sec="logs" onclick="show('logs')">
+        <span class="ico">📜</span> Logs & Exec
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">VPS</div>
+      <div class="sb-item" data-sec="vps" onclick="show('vps')">
+        <span class="ico">🖥️</span> Mini VPS <span class="sb-badge badge-blue">New</span>
+      </div>
+      <div class="sb-item" data-sec="vps-security" onclick="show('vps-security')">
+        <span class="ico">🔒</span> VPS Security
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Tools</div>
+      <div class="sb-item" data-sec="pip" onclick="show('pip')">
+        <span class="ico">📦</span> Package Manager
+      </div>
+      <div class="sb-item" data-sec="env" onclick="show('env')">
+        <span class="ico">🔑</span> Env Variables
+      </div>
+      <div class="sb-item" data-sec="update" onclick="show('update')">
+        <span class="ico">🔄</span> Auto Update
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Plans</div>
+      <div class="sb-item" data-sec="premium" onclick="show('premium')">
+        <span class="ico">⭐</span> Premium Plans <span class="sb-badge badge-green">₹</span>
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <div class="sb-group-label">Reference</div>
+      <div class="sb-item" data-sec="commands" onclick="show('commands')">
+        <span class="ico">⌨️</span> All Commands
+      </div>
+      <div class="sb-item" data-sec="limits" onclick="show('limits')">
+        <span class="ico">📊</span> Resource Limits
+      </div>
+      <div class="sb-item" data-sec="security" onclick="show('security')">
+        <span class="ico">🛡️</span> Security
+      </div>
+      <div class="sb-item" data-sec="errors" onclick="show('errors')">
+        <span class="ico">❓</span> Troubleshooting
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-links">
+      <a class="sb-link tg" href="https://t.me/TeamDev_HostBot" target="_blank">✈ Bot</a>
+      <a class="sb-link tg" href="https://t.me/team_x_og" target="_blank">💬 Support</a>
+      <a class="sb-link" href="https://t.me/CrimeZone_Update" target="_blank">📢 Updates</a>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main" id="mainArea">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="hamburger" onclick="toggleSB()">☰</button>
+      <div class="breadcrumb" id="breadcrumb">TeamDev Docs / <span>Overview</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill live">● Bot Live</span>
+      <span class="pill">v2.0</span>
+      <a class="tg-btn" href="https://t.me/TeamDev_HostBot" target="_blank">✈ Use Bot</a>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       HOME
+  ════════════════════════════════ -->
+  <div class="section active" id="sec-home">
+    <div class="sec-tag">📖 Documentation</div>
+    <h1><span class="grad">𝐃ᴏᴄᴋᴇʀ ✖ 𝐇ᴏ𝐬ᴛɪɴɢ</span><br>Bot Docs</h1>
+    <p>Welcome to the official documentation for <strong>TeamDev's Docker × Hosting Bot</strong> — your all-in-one Telegram bot to host Python projects 24/7 using Docker, deploy from GitHub, install packages, manage environment variables, and spin up a full SSH-accessible Mini VPS.</p>
+
+    <div class="hero-meta">
+      <div class="hero-stat">🐳 <strong>Docker</strong> powered containers</div>
+      <div class="hero-stat">🐙 <strong>GitHub</strong> OAuth deploy</div>
+      <div class="hero-stat">🖥️ <strong>SSH</strong> Mini VPS</div>
+      <div class="hero-stat">⭐ <strong>24/7</strong> uptime (Premium)</div>
+    </div>
+
+    <h2><span class="h2-bar"></span> What Can You Do?</h2>
+    <div class="cards">
+      <div class="card" onclick="show('upload')">
+        <div class="card-icon">🐍</div>
+        <div class="card-title">Python Hosting</div>
+        <div class="card-desc">Upload a ZIP with Dockerfile, run your bot 24/7 in an isolated Docker container.</div>
+      </div>
+      <div class="card" onclick="show('github')">
+        <div class="card-icon">🐙</div>
+        <div class="card-title">GitHub Deploy</div>
+        <div class="card-desc">Connect GitHub OAuth and deploy public or private repos directly — no zipping needed.</div>
+      </div>
+      <div class="card" onclick="show('vps')">
+        <div class="card-icon">🖥️</div>
+        <div class="card-title">Mini VPS</div>
+        <div class="card-desc">Get a real Linux terminal with SSH access, pre-installed Python3, Node, Git, and more.</div>
+      </div>
+      <div class="card" onclick="show('pip')">
+        <div class="card-icon">📦</div>
+        <div class="card-title">Package Manager</div>
+        <div class="card-desc">Install Python libraries inside running containers with <code>/pip</code> command.</div>
+      </div>
+      <div class="card" onclick="show('env')">
+        <div class="card-icon">🔑</div>
+        <div class="card-title">Env Variables</div>
+        <div class="card-desc">Set, view, or delete environment variables inside containers with <code>/env</code>.</div>
+      </div>
+      <div class="card" onclick="show('update')">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">Auto Update</div>
+        <div class="card-desc">Pull latest commits from GitHub and rebuild the container with one click.</div>
+      </div>
+    </div>
+
+    <div class="callout c-info">
+      <span class="ico">💡</span>
+      <p>New user? Start with the <strong onclick="show('getstarted')" style="color:#9090ff;cursor:pointer">Get Started guide</strong> — deploy your first project in under 5 minutes. For support, join <a href="https://t.me/team_x_og" style="color:#9090ff">@team_x_og</a>.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       GET STARTED
+  ════════════════════════════════ -->
+  <div class="section" id="sec-getstarted">
+    <div class="sec-tag">🚀 Quickstart</div>
+    <h1>Get <span class="grad">Started</span></h1>
+    <p>Deploy your first Python project in minutes. No account setup required — just open Telegram and message the bot.</p>
+
+    <h2><span class="h2-bar"></span> Quick Deploy (4 Steps)</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Open the Bot &amp; Send /start</h3>
+          <p>Find <a href="https://t.me/TeamDev_HostBot" style="color:#9090ff">@TeamDev_HostBot</a> on Telegram and send <code>/start</code>. The bot shows your account tier, limits, and quick commands.</p>
+          <div class="codeblock">
+            <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+            <pre><code>/start</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Prepare Your Project ZIP</h3>
+          <p>Create a ZIP containing <strong>Dockerfile</strong> and <strong>requirements.txt</strong> at the root level. These two files are mandatory — the bot will reject uploads without them.</p>
+          <div class="codeblock">
+            <div class="code-head"><span class="code-lang">file structure</span></div>
+            <pre><code>myproject.zip
+├── <span class="t-green">Dockerfile</span>          <span class="t-dim"># Required ✅</span>
+├── <span class="t-green">requirements.txt</span>    <span class="t-dim"># Required ✅</span>
+├── main.py             <span class="t-dim"># Your entry point</span>
+├── config.py
+└── utils/</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Upload &amp; Deploy</h3>
+          <p>Send <code>/upload</code> and then attach your ZIP file. The bot scans for security threats, validates required files, then builds and launches your Docker container automatically.</p>
+          <div class="codeblock">
+            <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+            <pre><code>/upload
+<span class="t-dim"># Then send your .zip file as an attachment</span>
+<span class="t-dim"># Bot will ask for a project name, then deploy!</span></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Manage Your Project</h3>
+          <p>After deployment, use these commands to manage your running project:</p>
+          <div class="codeblock">
+            <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+            <pre><code>/projects    <span class="t-dim"># View all your projects</span>
+/logs        <span class="t-dim"># View live output logs</span>
+/pip requests aiohttp   <span class="t-dim"># Install packages</span>
+/env TOKEN=my_token     <span class="t-dim"># Set env variable</span>
+/stop        <span class="t-dim"># Stop a running project</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-success">
+      <span class="ico">✅</span>
+      <p>Watch a video tutorial: <a href="https://t.me/TEAM_x_OG/108421" style="color:var(--a3)">t.me/TEAM_x_OG/108421</a> — step-by-step visual guide to deploy your first project.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       REQUIREMENTS
+  ════════════════════════════════ -->
+  <div class="section" id="sec-requirements">
+    <div class="sec-tag">📋 Requirements</div>
+    <h1>Project <span class="grad">Requirements</span></h1>
+    <p>Every project uploaded to the bot must follow a specific structure. Missing required files will cause deployment to fail.</p>
+
+    <h2><span class="h2-bar"></span> Required Files</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>File</th><th>Required</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>Dockerfile</code></td><td><span class="yes">✅ Yes</span></td><td>Tells Docker how to build and run your project</td></tr>
+          <tr><td><code>requirements.txt</code></td><td><span class="yes">✅ Yes</span></td><td>Lists all pip dependencies to install</td></tr>
+          <tr><td><code>main.py</code></td><td>Optional*</td><td>Recommended entry point (must be specified in Dockerfile)</td></tr>
+          <tr><td><code>.env</code></td><td>Optional</td><td>Local env vars (use /env command instead for security)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2><span class="h2-bar"></span> Example Dockerfile</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Dockerfile</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code><span class="t-purple">FROM</span> <span class="t-green">python:3.11-slim</span>
+
+<span class="t-purple">WORKDIR</span> /app
+
+<span class="t-purple">COPY</span> requirements.txt .
+<span class="t-purple">RUN</span> pip install --no-cache-dir -r requirements.txt
+
+<span class="t-purple">COPY</span> . .
+
+<span class="t-purple">CMD</span> ["python3", "main.py"]</code></pre>
+    </div>
+
+    <h2><span class="h2-bar"></span> Example requirements.txt</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">requirements.txt</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code>pyTelegramBotAPI==4.14.1
+requests==2.31.0
+pymongo==4.6.0
+python-dotenv==1.0.0</code></pre>
+    </div>
+
+    <div class="callout c-warn">
+      <span class="ico">⚠️</span>
+      <p>All uploaded files are automatically scanned for <strong>malware, crypto miners, DDoS tools, and other threats</strong>. Malicious code is instantly rejected and may result in a ban.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       UPLOAD
+  ════════════════════════════════ -->
+  <div class="section" id="sec-upload">
+    <div class="sec-tag">📦 Hosting</div>
+    <h1>Upload <span class="grad">Project</span></h1>
+    <p>Deploy any Python project by uploading a ZIP file. The bot builds a Docker image, runs your code in an isolated container, and keeps it live based on your plan.</p>
+
+    <h2><span class="h2-bar"></span> Upload Limits</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Limit</th><th>Free</th><th>⭐ Premium</th></tr></thead>
+        <tbody>
+          <tr><td>Max ZIP Size</td><td>50 MB</td><td>500 MB</td></tr>
+          <tr><td>Max Active Projects</td><td>1</td><td>3</td></tr>
+          <tr><td>RAM per Container</td><td>256 MB</td><td>1024 MB</td></tr>
+          <tr><td>CPU per Container</td><td>0.25 Core</td><td>2 Cores</td></tr>
+          <tr><td>Storage</td><td>3 GB</td><td>30 GB</td></tr>
+          <tr><td>Monthly Uptime</td><td>200 hours</td><td>720 hours</td></tr>
+          <tr><td>Auto-stop after inactivity</td><td>12 hours</td><td>Never</td></tr>
+          <tr><td>Auto-restart on crash</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2><span class="h2-bar"></span> Deployment Flow</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">flow</span></div>
+      <pre><code>User sends .zip
+    │
+    ├─ <span class="t-yellow">Validate</span>    → Check for Dockerfile + requirements.txt
+    │
+    ├─ <span class="t-yellow">Security</span>    → Scan for malware, miners, exploits
+    │
+    ├─ <span class="t-yellow">Name</span>        → Ask user for project name
+    │
+    ├─ <span class="t-yellow">Build</span>       → docker build (from Dockerfile)
+    │
+    ├─ <span class="t-yellow">Run</span>         → docker run with resource limits
+    │
+    └─ <span class="t-green">✅ Project Running</span> → Stored in MongoDB</code></pre>
+    </div>
+
+    <div class="callout c-info">
+      <span class="ico">💡</span>
+      <p>You can deploy the same project from a GitHub repo with <code>/github</code> and skip zipping entirely. See <strong onclick="show('github')" style="color:#9090ff;cursor:pointer">GitHub Deploy</strong> for details.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       GITHUB
+  ════════════════════════════════ -->
+  <div class="section" id="sec-github">
+    <div class="sec-tag">🐙 GitHub</div>
+    <h1>GitHub <span class="grad">Deploy</span></h1>
+    <p>Connect your GitHub account via OAuth and deploy repos directly — public or private — without creating a ZIP file manually.</p>
+
+    <h2><span class="h2-bar"></span> Connect GitHub (OAuth)</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Authorize the Bot</h3>
+          <p>Send <code>/connect</code> to get a GitHub OAuth authorization link. Click it, and grant the bot read access to your repositories.</p>
+          <div class="codeblock">
+            <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+            <pre><code>/connect
+<span class="t-dim"># Bot sends authorization link → Click → Authorize on GitHub → Done</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Browse &amp; Deploy Repos</h3>
+          <p>Use <code>/repos</code> to see all your GitHub repositories listed with a deploy button. Or use <code>/github</code> and paste a repo URL directly.</p>
+          <div class="codeblock">
+            <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+            <pre><code>/repos
+<span class="t-dim"># Shows list of all your repos with deploy buttons</span>
+
+/github
+<span class="t-dim"># Then paste: https://github.com/username/myrepo</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Auto-Deploy</h3>
+          <p>The bot clones the repo, validates <code>Dockerfile</code> and <code>requirements.txt</code>, scans for security threats, and deploys. Use <code>/update</code> later to pull new commits.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-success">
+      <span class="ico">🔐</span>
+      <p>The bot only requests <strong>read</strong> access to your repos. It cannot push, delete, or modify your GitHub repositories. Use <code>/disconnect</code> to revoke access anytime.</p>
+    </div>
+
+    <h2><span class="h2-bar"></span> Public vs Private Repos</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Repo Type</th><th>Without GitHub Auth</th><th>With GitHub Auth (/connect)</th></tr></thead>
+        <tbody>
+          <tr><td>Public repos</td><td><span class="yes">✅ Works</span></td><td><span class="yes">✅ Works</span></td></tr>
+          <tr><td>Private repos</td><td><span class="no">✗ No access</span></td><td><span class="yes">✅ Works</span></td></tr>
+          <tr><td>/repos browser</td><td><span class="no">✗ Not available</span></td><td><span class="yes">✅ Full list</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       MANAGE
+  ════════════════════════════════ -->
+  <div class="section" id="sec-manage">
+    <div class="sec-tag">⚙️ Management</div>
+    <h1>Manage <span class="grad">Projects</span></h1>
+    <p>Full project lifecycle management through Telegram — view status, stop, restart, delete, update files, and more.</p>
+
+    <h2><span class="h2-bar"></span> Project Commands</h2>
+    <div class="cmd-section">
+      <div class="cmd-row"><span class="cmd-name">/projects</span><span class="cmd-desc">View all your projects with real-time status, uptime, and action buttons (stop, restart, logs, delete).</span></div>
+      <div class="cmd-row"><span class="cmd-name">/stop</span><span class="cmd-desc">Stop a running project. You can restart it anytime — no data is lost when stopping.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/update</span><span class="cmd-desc">Pull the latest commits from GitHub and rebuild the container (only for GitHub-deployed projects).</span></div>
+      <div class="cmd-row"><span class="cmd-name">/replace &lt;file&gt;</span><span class="cmd-desc">Replace any file inside a running container. Send the command, then attach the new file. Container auto-restarts.</span></div>
+    </div>
+
+    <h2><span class="h2-bar"></span> Replace a File Example</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code>/replace main.py
+<span class="t-dim"># Bot says: "Send the new file now 📎"</span>
+<span class="t-dim"># You attach your updated main.py</span>
+<span class="t-dim"># → File replaced + container auto-restarts ✅</span></code></pre>
+    </div>
+
+    <div class="callout c-warn">
+      <span class="ico">⚠️</span>
+      <p>The <code>/replace</code> command only accepts top-level file names — no paths like <code>utils/helper.py</code>. No path traversal is allowed for security reasons.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       LOGS & EXEC
+  ════════════════════════════════ -->
+  <div class="section" id="sec-logs">
+    <div class="sec-tag">📜 Debugging</div>
+    <h1>Logs <span class="grad">&amp; Exec</span></h1>
+    <p>View your project's build and runtime logs directly in Telegram. Execute safe commands inside running containers for debugging.</p>
+
+    <h2><span class="h2-bar"></span> Viewing Logs</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code>/logs
+<span class="t-dim"># If 1 project: shows logs immediately</span>
+<span class="t-dim"># If multiple: select from list</span>
+<span class="t-dim"># Shows: Build logs (last 10 lines) + Runtime logs (50 lines)</span></code></pre>
+    </div>
+
+    <h2><span class="h2-bar"></span> Executing Commands (/exec)</h2>
+    <p>Run shell commands inside your running container for live debugging. Commands are executed as a restricted user with a security blacklist applied.</p>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code>/exec python3 --version
+/exec ls -la
+/exec cat requirements.txt
+/exec pip list</code></pre>
+    </div>
+
+    <h2><span class="h2-bar"></span> Blocked /exec Patterns</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Category</th><th>Blocked Patterns</th></tr></thead>
+        <tbody>
+          <tr><td>Network exfiltration</td><td><code>curl</code>, <code>wget</code>, <code>nc</code>, <code>ssh</code>, <code>scp</code></td></tr>
+          <tr><td>Privilege escalation</td><td><code>sudo</code>, <code>su</code>, <code>chmod 777</code>, <code>passwd</code></td></tr>
+          <tr><td>System destruction</td><td><code>rm -rf /</code>, <code>dd if=</code>, <code>mkfs</code></td></tr>
+          <tr><td>Shell operators</td><td><code>&&</code>, <code>||</code>, backtick, <code>$()</code></td></tr>
+          <tr><td>Package install</td><td><code>apt install</code>, <code>apk add</code>, <code>yum install</code></td></tr>
+          <tr><td>Crypto mining</td><td><code>xmrig</code>, <code>minerd</code>, <code>cpuminer</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       VPS
+  ════════════════════════════════ -->
+  <div class="section" id="sec-vps">
+    <div class="sec-tag">🖥️ Mini VPS</div>
+    <h1>Mini <span class="grad">VPS</span></h1>
+    <p>Get a fully isolated Linux environment with SSH access. Pre-installed with Python3, Node.js, Git, Nano, Vim, curl, and more. Accessible from any device with an SSH client.</p>
+
+    <h2><span class="h2-bar"></span> Getting Your VPS</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code>/vps
+<span class="t-dim"># Opens VPS panel → Press "Create VPS"</span>
+<span class="t-dim"># Bot provisions your container in ~30-60 seconds</span>
+<span class="t-dim"># You receive SSH credentials immediately</span></code></pre>
+    </div>
+
+    <p>After provisioning, connect from any terminal:</p>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">terminal</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code><span class="t-green">ssh</span> vpsuser@<span class="t-yellow">HOST_IP</span> <span class="t-pink">-p PORT</span>
+<span class="t-dim"># Enter your password when prompted</span>
+<span class="t-dim"># (credentials sent by bot after VPS creation)</span></code></pre>
+    </div>
+
+    <h2><span class="h2-bar"></span> VPS Plans</h2>
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-pill pp-free">FREE — 24 Hours (One-time)</div>
+        <div class="plan-name">Trial VPS</div>
+        <div class="plan-sub">One-time 24h trial per account</div>
+        <ul class="plan-list">
+          <li><span class="yes">✓</span> 256 MB RAM</li>
+          <li><span class="yes">✓</span> 0.25 CPU Core</li>
+          <li><span class="yes">✓</span> 2 GB Storage</li>
+          <li><span class="yes">✓</span> SSH Access</li>
+          <li><span class="yes">✓</span> Python3, Node, Git, Nano</li>
+          <li><span class="no">✗</span> Sudo / root access</li>
+          <li><span class="no">✗</span> Auto-restart on crash</li>
+          <li><span class="no">✗</span> Renewable after expiry</li>
+        </ul>
+      </div>
+      <div class="plan hot">
+        <div class="plan-pill pp-prem">⭐ PREMIUM — 30 Days</div>
+        <div class="plan-name">Premium VPS</div>
+        <div class="plan-sub">Persistent, always-on SSH VPS</div>
+        <ul class="plan-list">
+          <li><span class="yes">✓</span> 512 MB RAM</li>
+          <li><span class="yes">✓</span> 1 CPU Core</li>
+          <li><span class="yes">✓</span> 10 GB Storage</li>
+          <li><span class="yes">✓</span> SSH Access</li>
+          <li><span class="yes">✓</span> Python3, Node, Git, Nano, Vim</li>
+          <li><span class="no">✗</span> Sudo / root access</li>
+          <li><span class="yes">✓</span> Auto-restart on crash</li>
+          <li><span class="yes">✓</span> Renewable anytime</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2><span class="h2-bar"></span> VPS Panel Commands</h2>
+    <div class="cmd-section">
+      <div class="cmd-row"><span class="cmd-name">Start</span><span class="cmd-desc">Start a stopped VPS container (only if not expired).</span></div>
+      <div class="cmd-row"><span class="cmd-name">Stop</span><span class="cmd-desc">Temporarily stop the VPS. Data is preserved.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Restart</span><span class="cmd-desc">Restart the VPS container without losing data.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Creds Again</span><span class="cmd-desc">Re-send SSH credentials (host, port, username, password) to your chat.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Destroy</span><span class="cmd-desc">Permanently delete the VPS. All data is wiped. Free users cannot get another trial after this.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Refresh</span><span class="cmd-desc">Refresh VPS panel to see latest status and resource usage.</span></div>
+    </div>
+
+    <h2><span class="h2-bar"></span> Pre-installed Software</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Tool</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><code>python3</code> + <code>pip3</code></td><td>Run Python scripts, install packages</td></tr>
+          <tr><td><code>node</code> + <code>npm</code></td><td>Node.js apps and npm packages</td></tr>
+          <tr><td><code>git</code></td><td>Clone repos, version control</td></tr>
+          <tr><td><code>nano</code> / <code>vim</code></td><td>Edit files directly in terminal</td></tr>
+          <tr><td><code>curl</code> / <code>wget</code></td><td>Download files, make HTTP requests</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       VPS SECURITY
+  ════════════════════════════════ -->
+  <div class="section" id="sec-vps-security">
+    <div class="sec-tag">🔒 Security</div>
+    <h1>VPS <span class="grad">Security</span></h1>
+    <p>Every VPS runs inside a Docker container with multiple layers of isolation and resource limits to protect the host server and other users.</p>
+
+    <h2><span class="h2-bar"></span> Security Layers</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>sudo disabled</td><td><span class="yes">✅ Active</span></td><td>vpsuser has zero sudo privileges</td></tr>
+          <tr><td>su command blocked</td><td><span class="yes">✅ Active</span></td><td>Cannot switch to root or any other user</td></tr>
+          <tr><td>cap_drop=ALL</td><td><span class="yes">✅ Active</span></td><td>All Linux capabilities dropped</td></tr>
+          <tr><td>no-new-privileges</td><td><span class="yes">✅ Active</span></td><td>Cannot gain elevated privileges via any method</td></tr>
+          <tr><td>SSH root login</td><td><span class="yes">✅ Disabled</span></td><td>Root SSH access is blocked in sshd_config</td></tr>
+          <tr><td>Network isolation</td><td><span class="yes">✅ Active</span></td><td>Containers run on isolated bridge network</td></tr>
+          <tr><td>CPU hard limit</td><td><span class="yes">✅ Enforced</span></td><td>Cannot spike host CPU beyond allocated share</td></tr>
+          <tr><td>RAM hard limit</td><td><span class="yes">✅ Enforced</span></td><td>OOM-killed if memory exceeds limit</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout c-danger">
+      <span class="ico">⛔</span>
+      <p>Attempting to escape the container, attack the host server, scan ports, run crypto miners, or send spam from the VPS will result in an <strong>immediate permanent ban</strong>. All actions are logged.</p>
+    </div>
+
+    <h2><span class="h2-bar"></span> Container Config</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">docker run</span></div>
+      <pre><code>docker run
+  <span class="t-yellow">--cap-drop ALL</span>                     <span class="t-dim"># All capabilities dropped</span>
+  <span class="t-yellow">--security-opt no-new-privileges:true</span>
+  <span class="t-yellow">--memory 256m</span>                      <span class="t-dim"># RAM hard limit (free)</span>
+  <span class="t-yellow">--cpus 0.25</span>                        <span class="t-dim"># CPU hard limit (free)</span>
+  <span class="t-yellow">--network bridge</span>                   <span class="t-dim"># Isolated network</span>
+  <span class="t-yellow">-p 32000-33000:22</span>                  <span class="t-dim"># SSH port from pool</span>
+  telehost/vps-base</code></pre>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PIP
+  ════════════════════════════════ -->
+  <div class="section" id="sec-pip">
+    <div class="sec-tag">📦 Packages</div>
+    <h1>Package <span class="grad">Manager</span></h1>
+    <p>Install Python packages directly into running containers without restarting your project. Only safe, approved libraries are allowed.</p>
+
+    <h2><span class="h2-bar"></span> Usage</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code><span class="t-dim"># Install one package</span>
+/pip requests
+
+<span class="t-dim"># Install multiple (separate commands)</span>
+/pip aiohttp
+/pip pymongo
+
+<span class="t-dim"># If you have multiple projects, specify which one</span>
+/pip requests MyBotProject</code></pre>
+    </div>
+
+    <h2><span class="h2-bar"></span> Allowed Package Categories</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Category</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>HTTP / Networking</td><td><code>requests</code>, <code>aiohttp</code>, <code>httpx</code>, <code>websockets</code></td></tr>
+          <tr><td>Telegram Bots</td><td><code>pyTelegramBotAPI</code>, <code>aiogram</code>, <code>python-telegram-bot</code></td></tr>
+          <tr><td>Database</td><td><code>pymongo</code>, <code>redis</code>, <code>sqlalchemy</code>, <code>motor</code></td></tr>
+          <tr><td>Data / Utils</td><td><code>pandas</code>, <code>numpy</code>, <code>pydantic</code>, <code>loguru</code></td></tr>
+          <tr><td>Web Frameworks</td><td><code>flask</code>, <code>fastapi</code>, <code>uvicorn</code></td></tr>
+          <tr><td>Config</td><td><code>python-dotenv</code>, <code>decouple</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout c-danger">
+      <span class="ico">⛔</span>
+      <p>Packages that enable system exploitation, privilege escalation, cryptomining, port scanning, or DDoS are blocked by the security scanner and cannot be installed.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       ENV
+  ════════════════════════════════ -->
+  <div class="section" id="sec-env">
+    <div class="sec-tag">🔑 Configuration</div>
+    <h1>Environment <span class="grad">Variables</span></h1>
+    <p>Set, view, or delete environment variables inside your running containers. Changes are applied immediately by writing a <code>.env</code> file and restarting the container.</p>
+
+    <h2><span class="h2-bar"></span> Usage</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code><span class="t-dim"># Set a variable</span>
+/env BOT_TOKEN=1234567890:ABC...
+/env MONGODB_URI=mongodb+srv://...
+/env API_KEY=my_secret_key
+
+<span class="t-dim"># View all variables</span>
+/env
+
+<span class="t-dim"># Delete a variable</span>
+/env API_KEY=</code></pre>
+    </div>
+
+    <h2><span class="h2-bar"></span> Rules</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Rule</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td>Key format</td><td>Uppercase letters, digits, and underscores only. Example: <code>MY_VAR_1</code></td></tr>
+          <tr><td>Protected keys</td><td><code>PATH</code>, <code>HOME</code>, <code>SHELL</code>, <code>LD_PRELOAD</code> are blocked</td></tr>
+          <tr><td>Delete syntax</td><td><code>/env KEY=</code> (empty value after <code>=</code>)</td></tr>
+          <tr><td>Apply method</td><td>Writes <code>.env</code> file + restarts container automatically</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout c-success">
+      <span class="ico">✅</span>
+      <p>Variables are stored securely in the database and re-applied automatically if the container restarts or is updated. Your project can read them using <code>os.getenv()</code> or <code>python-dotenv</code>.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       UPDATE
+  ════════════════════════════════ -->
+  <div class="section" id="sec-update">
+    <div class="sec-tag">🔄 CI/CD</div>
+    <h1>Auto <span class="grad">Update</span></h1>
+    <p>Pull the latest commits from your GitHub repository and rebuild the container — without re-uploading anything. Only works for projects deployed via <code>/github</code> or <code>/repos</code>.</p>
+
+    <h2><span class="h2-bar"></span> How to Update</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Telegram</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code>/update
+<span class="t-dim"># If 1 repo project: shows confirmation immediately</span>
+<span class="t-dim"># If multiple: select which project to update</span>
+<span class="t-dim"># → Clones latest commit → Rebuilds Docker image → Restarts</span></code></pre>
+    </div>
+
+    <h2><span class="h2-bar"></span> Update Flow</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">flow</span></div>
+      <pre><code>/update confirmed
+    │
+    ├─ <span class="t-yellow">Clone</span>    → git clone --depth 1 (latest commit)
+    │
+    ├─ <span class="t-yellow">Compare</span>  → Check if latest commit ≠ current commit
+    │            → If same: "No updates found ✅"
+    │
+    ├─ <span class="t-yellow">Stop</span>     → Stop + remove old container
+    │
+    ├─ <span class="t-yellow">Rebuild</span>  → docker build from new code
+    │
+    └─ <span class="t-green">✅ Running on latest commit</span></code></pre>
+    </div>
+
+    <div class="callout c-info">
+      <span class="ico">💡</span>
+      <p>If your repo is private and your GitHub OAuth token is expired, the update will fail. Use <code>/connect</code> to re-authorize and then try <code>/update</code> again.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PREMIUM
+  ════════════════════════════════ -->
+  <div class="section" id="sec-premium">
+    <div class="sec-tag">⭐ Premium</div>
+    <h1>Premium <span class="grad">Plans</span></h1>
+    <p>Upgrade to Premium for more resources, more projects, always-on uptime, auto-restart, and full VPS access. Contact the admin to purchase.</p>
+
+    <h2><span class="h2-bar"></span> Plan Comparison</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Feature</th><th>🆓 Free</th><th>⭐ Premium</th></tr></thead>
+        <tbody>
+          <tr><td>Max Active Projects</td><td>1</td><td>3</td></tr>
+          <tr><td>Max Upload Size</td><td>50 MB</td><td>500 MB</td></tr>
+          <tr><td>RAM per Project</td><td>256 MB</td><td>1024 MB</td></tr>
+          <tr><td>CPU per Project</td><td>0.25 Core</td><td>2 Cores</td></tr>
+          <tr><td>Storage</td><td>3 GB</td><td>30 GB</td></tr>
+          <tr><td>Monthly Uptime</td><td>200 hours</td><td>720 hours</td></tr>
+          <tr><td>Auto-stop (inactivity)</td><td>After 12h</td><td>Never</td></tr>
+          <tr><td>Auto-restart on crash</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td>Deployment speed</td><td>Slow</td><td>Fast</td></tr>
+          <tr><td>VPS access</td><td>24h trial (once)</td><td>30 days, renewable</td></tr>
+          <tr><td>VPS RAM</td><td>256 MB</td><td>512 MB</td></tr>
+          <tr><td>Private GitHub repos</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+          <tr><td>Priority support</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2><span class="h2-bar"></span> Pricing</h2>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">Pricing (INR) (Pricing May Not Meet The Current Updated Pricing)</span></div>
+      <pre><code>₹150   →  <span class="t-green">7 Days</span>  Premium
+₹249   →  <span class="t-green">20 Days</span> Premium <span class="t-yellow">+ 2 Days Free</span>
+₹349   →  <span class="t-green">35 Days</span> Premium <span class="t-yellow">+ 5 Days Free</span></code></pre>
+    </div>
+
+    <div class="callout c-info">
+      <span class="ico">💬</span>
+      <p>To purchase Premium, contact <a href="https://t.me/MR_ARMAN_08" style="color:#9090ff">@MR_ARMAN_08</a> on Telegram. Use <code>/premium</code> in the bot to view your current plan and expiry date.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       ALL COMMANDS
+  ════════════════════════════════ -->
+  <div class="section" id="sec-commands">
+    <div class="sec-tag">⌨️ Reference</div>
+    <h1>All <span class="grad">Commands</span></h1>
+    <p>Complete reference for every user-facing command available in the bot.</p>
+
+    <h2><span class="h2-bar"></span> General</h2>
+    <div class="cmd-section">
+      <div class="cmd-row"><span class="cmd-name">/start</span><span class="cmd-desc">Launch the bot. Shows your tier, limits, GitHub status, and quick action buttons.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/help</span><span class="cmd-desc">Full command reference and feature overview with links to support.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/support</span><span class="cmd-desc">Shows support group, updates channel, and developer contact links.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/premium</span><span class="cmd-desc">View your current plan, expiry date (if premium), or see upgrade pricing and benefits.</span></div>
+    </div>
+
+    <h2><span class="h2-bar"></span> Project Hosting</h2>
+    <div class="cmd-section">
+      <div class="cmd-row"><span class="cmd-name">/upload</span><span class="cmd-desc">Start the upload process. Bot asks for a ZIP file with Dockerfile + requirements.txt.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/projects</span><span class="cmd-desc">View all your running/stopped projects with status, uptime, and action buttons.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/logs</span><span class="cmd-desc">View build logs and runtime stdout/stderr for any of your projects.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/stop</span><span class="cmd-desc">Stop a running project. Can be restarted later without data loss.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/update</span><span class="cmd-desc">Pull latest GitHub commits and rebuild the container (GitHub projects only).</span></div>
+      <div class="cmd-row"><span class="cmd-name">/replace &lt;file&gt;</span><span class="cmd-desc">Replace a file inside a running container. Send file after the command. Auto-restarts.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/env [KEY=value]</span><span class="cmd-desc">Set/view/delete environment variables in running containers. <code>/env</code> alone shows current vars.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/pip &lt;library&gt;</span><span class="cmd-desc">Install a Python library inside a running container using pip.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/exec &lt;command&gt;</span><span class="cmd-desc">Execute a shell command inside your running container for debugging. Restricted for security.</span></div>
+    </div>
+
+    <h2><span class="h2-bar"></span> GitHub Integration</h2>
+    <div class="cmd-section">
+      <div class="cmd-row"><span class="cmd-name">/connect</span><span class="cmd-desc">Connect GitHub via OAuth. Enables private repo access and /repos browser.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/disconnect</span><span class="cmd-desc">Revoke GitHub access and delete the stored OAuth token.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/repos</span><span class="cmd-desc">Browse all your GitHub repos in a list with one-tap deploy buttons.</span></div>
+      <div class="cmd-row"><span class="cmd-name">/github</span><span class="cmd-desc">Deploy from a GitHub URL directly. Paste URL after the command.</span></div>
+    </div>
+
+    <h2><span class="h2-bar"></span> VPS</h2>
+    <div class="cmd-section">
+      <div class="cmd-row"><span class="cmd-name">/vps</span><span class="cmd-desc">Open the VPS management panel. Create, view credentials, stop, restart, or destroy your VPS.</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       LIMITS
+  ════════════════════════════════ -->
+  <div class="section" id="sec-limits">
+    <div class="sec-tag">📊 Limits</div>
+    <h1>Resource <span class="grad">Limits</span></h1>
+    <p>Full breakdown of all resource limits applied per tier for project hosting and VPS instances.</p>
+
+    <h2><span class="h2-bar"></span> Project Limits</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Resource</th><th>Free Tier</th><th>Premium Tier</th></tr></thead>
+        <tbody>
+          <tr><td>Projects</td><td>1</td><td>3</td></tr>
+          <tr><td>Upload size</td><td>50 MB</td><td>500 MB</td></tr>
+          <tr><td>RAM</td><td>256 MB</td><td>1024 MB (1 GB)</td></tr>
+          <tr><td>CPU</td><td>0.25 Core</td><td>2 Cores</td></tr>
+          <tr><td>Storage</td><td>3 GB</td><td>30 GB</td></tr>
+          <tr><td>Monthly uptime</td><td>200 hours</td><td>720 hours</td></tr>
+          <tr><td>Auto-stop</td><td>After 12 hours</td><td>Never</td></tr>
+          <tr><td>Crash recovery</td><td>Manual restart</td><td>Auto-restart</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2><span class="h2-bar"></span> VPS Limits</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Resource</th><th>Free VPS (24h)</th><th>Premium VPS (30d)</th></tr></thead>
+        <tbody>
+          <tr><td>RAM</td><td>256 MB</td><td>512 MB</td></tr>
+          <tr><td>CPU</td><td>0.25 Core</td><td>1 Core</td></tr>
+          <tr><td>Storage</td><td>2 GB</td><td>10 GB</td></tr>
+          <tr><td>Duration</td><td>24 hours (one-time)</td><td>30 days (renewable)</td></tr>
+          <tr><td>SSH access</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Sudo</td><td>Disabled</td><td>Disabled</td></tr>
+          <tr><td>Auto-restart</td><td>No</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       SECURITY
+  ════════════════════════════════ -->
+  <div class="section" id="sec-security">
+    <div class="sec-tag">🛡️ Security</div>
+    <h1>Bot <span class="grad">Security</span></h1>
+    <p>TeamDev's hosting bot implements multiple security layers at every step to protect users, the host server, and the platform integrity.</p>
+
+    <h2><span class="h2-bar"></span> Upload Security</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Check</th><th>What It Does</th></tr></thead>
+        <tbody>
+          <tr><td>File type validation</td><td>Only <code>.zip</code> files accepted. Other formats rejected.</td></tr>
+          <tr><td>Size limit enforcement</td><td>Exceeding the upload limit returns an error, no partial processing.</td></tr>
+          <tr><td>Security scan</td><td>All extracted files scanned for malware, miners, DDoS code, backdoors.</td></tr>
+          <tr><td>Threat blocking</td><td>Detected threats are logged and project deployment is aborted.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2><span class="h2-bar"></span> Container Security</h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Feature</th><th>Applied To</th></tr></thead>
+        <tbody>
+          <tr><td>Docker resource limits (CPU + RAM)</td><td>All project containers + VPS</td></tr>
+          <tr><td>Network isolation</td><td>All containers on isolated bridge network</td></tr>
+          <tr><td>cap_drop=ALL</td><td>VPS containers</td></tr>
+          <tr><td>no-new-privileges</td><td>VPS containers</td></tr>
+          <tr><td>Non-root exec user</td><td>/exec commands run as <code>nobody</code></td></tr>
+          <tr><td>Command blacklist</td><td>/exec commands filtered against EXEC_BLACKLIST</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2><span class="h2-bar"></span> Account Security</h2>
+    <div class="cmd-section">
+      <div class="cmd-row"><span class="cmd-name">Rate Limiting</span><span class="cmd-desc">Commands are rate-limited per user to prevent spam and abuse.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Duplicate Detection</span><span class="cmd-desc">Users running multiple accounts from same device are detected and banned.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Ban System</span><span class="cmd-desc">Banned users cannot use any bot commands. Appeals via support group.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Warning System</span><span class="cmd-desc">3 warnings results in automatic permanent ban.</span></div>
+      <div class="cmd-row"><span class="cmd-name">Maintenance Mode</span><span class="cmd-desc">During maintenance, only admins can use the bot. Users see a notification.</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       TROUBLESHOOTING
+  ════════════════════════════════ -->
+  <div class="section" id="sec-errors">
+    <div class="sec-tag">❓ Help</div>
+    <h1><span class="grad">Troubleshooting</span></h1>
+    <p>Common issues and how to resolve them.</p>
+
+    <h2><span class="h2-bar"></span> Upload Failures</h2>
+    <div class="callout c-warn">
+      <span class="ico">⚠️</span>
+      <p><strong>Missing required files</strong> — Make sure your ZIP contains <code>Dockerfile</code> and <code>requirements.txt</code> at the root level (not inside a subfolder).</p>
+    </div>
+    <div class="callout c-danger">
+      <span class="ico">⛔</span>
+      <p><strong>Security threat detected</strong> — Your code contains patterns that triggered the security scanner. Remove any network scanning, mining, or exploit-related code.</p>
+    </div>
+    <div class="callout c-warn">
+      <span class="ico">⚠️</span>
+      <p><strong>File too large</strong> — Free tier: 50MB max. Premium: 500MB max. Compress your project or use GitHub deploy instead.</p>
+    </div>
+
+    <h2><span class="h2-bar"></span> Deployment Failures</h2>
+    <h3>Docker build failed</h3>
+    <p>Use <code>/logs</code> to see the build output. Common causes: syntax error in Dockerfile, missing base image, or network issues during <code>pip install</code>. Fix your code and re-upload.</p>
+
+    <h3>Project crashes immediately</h3>
+    <p>Check <code>/logs</code> for runtime errors. Make sure all required env variables are set with <code>/env</code>, and all dependencies are in <code>requirements.txt</code>.</p>
+
+    <h2><span class="h2-bar"></span> GitHub Issues</h2>
+    <h3>Cannot clone private repo</h3>
+    <p>Use <code>/disconnect</code> then <code>/connect</code> to re-authorize GitHub access. Then try <code>/github</code> or <code>/update</code> again.</p>
+
+    <h3>/repos shows empty list</h3>
+    <p>Your GitHub token may have expired. Re-connect using <code>/connect</code>.</p>
+
+    <h2><span class="h2-bar"></span> VPS Issues</h2>
+    <h3>SSH connection refused</h3>
+    <div class="codeblock">
+      <div class="code-head"><span class="code-lang">terminal</span><button class="copy-btn" onclick="cp(this)">Copy</button></div>
+      <pre><code><span class="t-dim"># Make sure you're using the exact port from the bot</span>
+ssh vpsuser@HOST_IP <span class="t-pink">-p EXACT_PORT_FROM_BOT</span>
+
+<span class="t-dim"># VPS may have expired — check /vps panel</span>
+<span class="t-dim"># Wait 60s after creation for SSH to start</span></code></pre>
+    </div>
+
+    <h3>VPS expired / can't restart</h3>
+    <p>Free VPS cannot be restarted after expiry. Premium users can renew. Destroy the old VPS and create a new one (free trial cannot be used again).</p>
+
+    <h2><span class="h2-bar"></span> Rate Limit</h2>
+    <p>You're sending too many commands too fast. Wait a few seconds. Rate limits reset automatically — no action needed.</p>
+
+    <h2><span class="h2-bar"></span> Still Need Help?</h2>
+    <div class="callout c-success">
+      <span class="ico">💬</span>
+      <p>Join the support group <a href="https://t.me/team_x_og" style="color:var(--a3)">@team_x_og</a> and describe your issue. For bot updates and announcements, follow <a href="https://t.me/CrimeZone_Update" style="color:var(--a3)">@CrimeZone_Update</a>. Inside the bot, use <code>/support</code> for quick links.</p>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<script>
+const SECTIONS = {
+  home:         'Overview',
+  getstarted:   'Get Started',
+  requirements: 'Requirements',
+  upload:       'Upload Project',
+  github:       'GitHub Deploy',
+  manage:       'Manage Projects',
+  logs:         'Logs & Exec',
+  vps:          'Mini VPS',
+  'vps-security':'VPS Security',
+  pip:          'Package Manager',
+  env:          'Env Variables',
+  update:       'Auto Update',
+  premium:      'Premium Plans',
+  commands:     'All Commands',
+  limits:       'Resource Limits',
+  security:     'Security',
+  errors:       'Troubleshooting',
+};
+
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+
+  const sec = document.getElementById('sec-' + id);
+  if (sec) sec.classList.add('active');
+
+  document.querySelectorAll('.sb-item').forEach(n => {
+    if (n.dataset.sec === id) n.classList.add('active');
+  });
+
+  document.getElementById('breadcrumb').innerHTML = `TeamDev Docs / <span>${SECTIONS[id] || id}</span>`;
+  document.getElementById('mainArea').scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSB() { document.getElementById('sidebar').classList.toggle('open'); }
+
+function cp(btn) {
+  const code = btn.closest('.codeblock').querySelector('pre').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+
+function filterNav(q) {
+  q = q.toLowerCase().trim();
+  document.querySelectorAll('.sb-item').forEach(item => {
+    item.style.display = (!q || item.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.sb-group').forEach(g => {
+    const visible = [...g.querySelectorAll('.sb-item')].some(i => i.style.display !== 'none');
+    g.style.display = visible ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
